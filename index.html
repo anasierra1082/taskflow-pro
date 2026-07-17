@@ -83,8 +83,12 @@
             color: var(--primary);
         }
 
-        .login-btn {
-            background: var(--primary);
+        .btn-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .login-btn, .demo-btn {
             color: white;
             border: none;
             padding: 0.7rem 1.5rem;
@@ -94,10 +98,23 @@
             transition: all 0.3s;
         }
 
+        .login-btn {
+            background: var(--primary);
+        }
+
         .login-btn:hover {
             background: var(--secondary);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .demo-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+        }
+
+        .demo-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* HERO SECTION */
@@ -513,6 +530,16 @@
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
         }
 
+        .demo-notice {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
         /* ANIMATIONS */
         @keyframes fadeInUp {
             from {
@@ -565,6 +592,16 @@
 
             .nav-links {
                 gap: 1rem;
+                flex-direction: column;
+            }
+
+            .btn-container {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .login-btn, .demo-btn {
+                width: 100%;
             }
 
             .features {
@@ -593,7 +630,10 @@
             <li><a href="#features">Características</a></li>
             <li><a href="#modules">Módulos</a></li>
             <li><a href="#axes">Diferenciadores</a></li>
-            <li><button class="login-btn" onclick="openLoginModal()">Iniciar Sesión</button></li>
+            <li class="btn-container">
+                <button class="login-btn" onclick="openLoginModal()">🔐 Iniciar Sesión</button>
+                <button class="demo-btn" onclick="accessDemo()">📋 Acceso Demo</button>
+            </li>
         </ul>
     </nav>
 
@@ -849,7 +889,7 @@
             </form>
 
             <p style="text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.9rem;">
-                Por ahora es un acceso demo. ¡Pronto disponible!
+                ¿Quieres probar sin registrarte? <a href="#" onclick="closeLoginModal(); accessDemo(); return false;" style="color: var(--primary); font-weight: 600;">Acceso Demo</a>
             </p>
         </div>
     </div>
@@ -880,23 +920,34 @@
             }
         }
 
+        function accessDemo() {
+            localStorage.setItem('currentUser', 'DEMO');
+            localStorage.setItem('currentUserType', 'demo');
+            localStorage.removeItem('currentCompany');
+            window.location.href = 'dashboard.html';
+        }
+
         function handleSubmit(event) {
             event.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const name = email.split('@')[0].toUpperCase();
+
+            // Save to localStorage
+            localStorage.setItem('currentUser', name);
+            localStorage.setItem('currentUserType', accountType);
 
             if (accountType === 'personal') {
-                alert(`✅ Acceso Personal Simulado\n\nCorreo: ${email}\n\n(En producción, redirigirá al dashboard personal)`);
+                localStorage.removeItem('currentCompany');
+                alert(`✅ Acceso Personal\n\nBienvenido ${name}`);
             } else {
                 const companyName = document.getElementById('companyName').value;
-                const employees = document.getElementById('employees').value;
-                const domain = document.getElementById('domain').value;
-                const industry = document.getElementById('industry').value;
-
-                alert(`✅ Onboarding Corporativo Simulado\n\nEmpresa: ${companyName}\nColaboradores: ${employees}\nDominio: ${domain}\nIndustria: ${industry}\n\n(En producción, cargaría AI-Recipes y crearía el dashboard administrativo)`);
+                localStorage.setItem('currentCompany', companyName);
+                alert(`✅ Acceso Corporativo\n\nBienvenido ${name}\nEmpresa: ${companyName}`);
             }
 
-            closeLoginModal();
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
         }
 
         function scrollToSection(id) {
