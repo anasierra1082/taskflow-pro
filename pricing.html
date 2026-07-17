@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes y Precios - TaskFlow Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .plan-card.featured {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .plan-card.featured:hover {
+            transform: scale(1.08) translateY(-10px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .plan-description {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .price-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .price {
+            font-size: 3rem;
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .price-subtitle {
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .features-list li {
+            padding: 12px 0;
+            color: #2d3748;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .features-list li.unavailable {
+            color: #cbd5e0;
+        }
+
+        .features-list li.unavailable::before {
+            content: "✗";
+            color: #cbd5e0;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .cta-button.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .cta-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .cta-button.secondary:hover {
+            background: #f8f9ff;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-section h2 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .feature-name {
+            font-weight: 600;
+            color: #2d3748;
+            min-width: 250px;
+        }
+
+        .feature-cell {
+            text-align: center;
+            color: #718096;
+        }
+
+        .feature-cell.included {
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .faq-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-section h2 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+        }
+
+        .faq-item h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .faq-item p {
+            color: #718096;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq-item.active p {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .corporate-pricing {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 40px;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .corporate-pricing h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .corporate-pricing p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .contact-button {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-card.featured {
+                transform: scale(1);
+            }
+
+            .plan-card.featured:hover {
+                transform: translateY(-10px);
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+            }
+
+            .feature-name {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Volver</a>
+
+        <div class="header">
+            <h1>💰 Planes y Precios</h1>
+            <p>Elige el plan perfecto para tu equipo</p>
+        </div>
+
+        <!-- PRICING CARDS -->
+        <div class="pricing-grid">
+            <!-- PLAN PERSONAL (FREEMIUM) -->
+            <div class="plan-card">
+                <div class="plan-name">👤 Personal</div>
+                <p class="plan-description">Perfecto para trabajadores independientes</p>
+                
+                <div class="price-section">
+                    <div class="price">$0</div>
+                    <div class="price-subtitle">Por siempre, gratis</div>
+                </div>
+
+                <ul class="features-list">
+                    <li>1 usuario</li>
+                    <li>Gestión básica de tareas</li>
+                    <li>Prioridades (Alta, Media, Baja)</li>
+                    <li>Estados de tareas</li>
+                    <li>Mi Perfil</li>
+                    <li class="unavailable">Escudo de Salud</li>
+                    <li class="unavailable">Bio-Ritmo avanzado</li>
+                    <li class="unavailable">Administración</li>
+                    <li class="unavailable">Reportes PDF/Excel</li>
+                </ul>
+
+                <button class="cta-button secondary" onclick="openModal('personal')">Comenzar Gratis</button>
+            </div>
+
+            <!-- PLAN STARTUP (CORPORATIVO PEQUEÑO) -->
+            <div class="plan-card">
+                <div class="badge">Popular</div>
+                <div class="plan-name">🚀 Startup</div>
+                <p class="plan-description">Para equipos pequeños en crecimiento</p>
+                
+                <div class="price-section">
+                    <div class="price">$99</div>
+                    <div class="price-subtitle">Por mes (1-10 usuarios)</div>
+                </div>
+
+                <ul class="features-list">
+                    <li>1-10 usuarios</li>
+                    <li>Gestión completa de tareas</li>
+                    <li>Bio-Ritmo básico</li>
+                    <li>Escudo de Salud (básico)</li>
+                    <li>Dashboard de carga</li>
+                    <li>Gestión de usuarios</li>
+                    <li>Reportes básicos</li>
+                    <li class="unavailable">AI-Recipes por industria</li>
+                    <li class="unavailable">Soporte prioritario</li>
+                </ul>
+
+                <button class="cta-button primary" onclick="openModal('startup')">Comprar Ahora</button>
+            </div>
+
+            <!-- PLAN ENTERPRISE (CORPORATIVO GRANDE) -->
+            <div class="plan-card featured">
+                <div class="badge">Recomendado</div>
+                <div class="plan-name">🏢 Enterprise</div>
+                <p class="plan-description">Solución completa para empresas grandes</p>
+                
+                <div class="price-section">
+                    <div class="price">$299</div>
+                    <div class="price-subtitle">Por mes (11-50 usuarios)</div>
+                </div>
+
+                <ul class="features-list">
+                    <li>11-50 usuarios</li>
+                    <li>Gestión completa de tareas</li>
+                    <li>Bio-Ritmo avanzado</li>
+                    <li>Escudo de Salud completo</li>
+                    <li>Dashboard avanzado</li>
+                    <li>Gestión completa de usuarios</li>
+                    <li>Reportes PDF/Excel</li>
+                    <li>AI-Recipes por industria</li>
+                    <li>Soporte prioritario (24/7)</li>
+                </ul>
+
+                <button class="cta-button primary" onclick="openModal('enterprise')">Comprar Ahora</button>
+            </div>
+
+            <!-- PLAN CORPORATIVO CUSTOM -->
+            <div class="plan-card">
+                <div class="plan-name">👑 Custom</div>
+                <p class="plan-description">Para empresas con 50+ usuarios</p>
+                
+                <div class="price-section">
+                    <div class="price">Contactar</div>
+                    <div class="price-subtitle">Precio personalizado</div>
+                </div>
+
+                <ul class="features-list">
+                    <li>50+ usuarios (ilimitado)</li>
+                    <li>Todas las funcionalidades</li>
+                    <li>Integración API personalizada</li>
+                    <li>Soporte dedicado 24/7</li>
+                    <li>Capacitación del equipo</li>
+                    <li>Reportes customizados</li>
+                    <li>SLA garantizado</li>
+                    <li>Seguridad empresarial</li>
+                    <li>Backup automático</li>
+                </ul>
+
+                <button class="cta-button secondary" onclick="openModal('custom')">Contactar Ventas</button>
+            </div>
+        </div>
+
+        <!-- CORPORATE PRICING INFO -->
+        <div class="corporate-pricing">
+            <h3>🏢 Planes Corporativos Personalizados</h3>
+            <p>¿Tienes más de 50 usuarios? Recibe descuentos especiales y características exclusivas</p>
+            <button class="contact-button" onclick="openModal('contact')">Hablar con Ventas</button>
+        </div>
+
+        <!-- COMPARISON TABLE -->
+        <div class="comparison-section">
+            <h2>📊 Comparativa de Funcionalidades</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Funcionalidad</th>
+                        <th style="width: 15%;">Personal</th>
+                        <th style="width: 15%;">Startup</th>
+                        <th style="width: 15%;">Enterprise</th>
+                        <th style="width: 15%;">Custom</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature-name">Usuarios</td>
+                        <td class="feature-cell">1</td>
+                        <td class="feature-cell">1-10</td>
+                        <td class="feature-cell">11-50</td>
+                        <td class="feature-cell">50+</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Gestión de Tareas</td>
+                        <td class="feature-cell included">✓</td>
+                        <td class="feature-cell included">✓</td>
+                        <td class="feature-cell included">✓</td>
+                        <td class="feature-cell included">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Bio-Ritmo</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell included">Básico</td>
+                        <td class="feature-cell included">Avanzado</td>
+                        <td class="feature-cell included">Completo</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Escudo de Salud</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell included">Básico</td>
+                        <td class="feature-cell included">Completo</td>
+                        <td class="feature-cell included">Premium</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">AI-Recipes</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell included">✓</td>
+                        <td class="feature-cell included">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Dashboard Admin</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell included">Básico</td>
+                        <td class="feature-cell included">Avanzado</td>
+                        <td class="feature-cell included">Completo</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Reportes</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell included">Básicos</td>
+                        <td class="feature-cell included">PDF/Excel</td>
+                        <td class="feature-cell included">Customizados</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Soporte</td>
+                        <td class="feature-cell">Community</td>
+                        <td class="feature-cell">Email</td>
+                        <td class="feature-cell">Prioritario 24/7</td>
+                        <td class="feature-cell included">Dedicado 24/7</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Integraciones API</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell">-</td>
+                        <td class="feature-cell included">Básicas</td>
+                        <td class="feature-cell included">Personalizado</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div class="faq-section">
+            <h2>❓ Preguntas Frecuentes</h2>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>¿Puedo cambiar de plan en cualquier momento?</h4>
+                <p>Sí, puedes cambiar de plan en cualquier momento. Los cambios se reflejarán en tu próximo ciclo de facturación. Si cambias a un plan superior, recibirás un crédito prorrateado.</p>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>¿Hay período de prueba gratuita?</h4>
+                <p>El plan Personal es completamente gratis y sin límite de tiempo. Para los planes Startup y Enterprise, ofrecemos 14 días de prueba gratuita sin necesidad de tarjeta de crédito.</p>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>¿Qué sucede si agrego más usuarios de los incluidos?</h4>
+                <p>Si tu equipo crece, simplemente cambia a un plan superior. No hay cargos ocultos. Por cada usuario adicional fuera de tu plan, se cobrará $10/mes.</p>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>¿Incluye soporte al cliente?</h4>
+                <p>El plan Personal tiene soporte comunitario. Startup incluye soporte por email (24-48 horas). Enterprise y Custom incluyen soporte prioritario 24/7.</p>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>¿Puedo exportar mis datos?</h4>
+                <p>Sí, todos nuestros planes permiten exportar datos. Todos tus datos son tuyos. Puedes exportar tareas, reportes y información en cualquier momento en formato CSV o JSON.</p>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>¿Qué métodos de pago aceptan?</h4>
+                <p>Aceptamos tarjetas de crédito (Visa, Mastercard, Amex), transferencia bancaria, y PayPal. Para planes Custom, contacta al equipo de ventas.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="planModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 40px; max-width: 500px; width: 90%;">
+            <button onclick="closeModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            
+            <h2 id="modalTitle" style="color: #2d3748; margin-bottom: 20px;"></h2>
+            <p id="modalContent" style="color: #718096; margin-bottom: 25px; line-height: 1.6;"></p>
+
+            <form id="checkoutForm" onsubmit="handleCheckout(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="text" placeholder="Nombre completo" required style="padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                <input type="email" placeholder="Correo electrónico" required style="padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                <input type="tel" placeholder="Teléfono" required style="padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                <textarea placeholder="Mensaje (opcional)" rows="3" style="padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;"></textarea>
+
+                <button type="submit" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 14px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    Confirmar Compra
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(plan) {
+            const modal = document.getElementById('planModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+
+            const plans = {
+                personal: {
+                    title: '👤 Plan Personal - $0',
+                    content: 'Ingresa tus datos para comenzar con el plan gratuito. Podrás crear tu cuenta y acceder a todas las funciones básicas al instante.'
+                },
+                startup: {
+                    title: '🚀 Plan Startup - $99/mes',
+                    content: 'Para equipos de 1-10 usuarios. Incluye Escudo de Salud básico, Bio-Ritmo y dashboard de administración. Pago anual con 20% de descuento disponible.'
+                },
+                enterprise: {
+                    title: '🏢 Plan Enterprise - $299/mes',
+                    content: 'Para equipos de 11-50 usuarios. Incluye todas las funcionalidades: Escudo de Salud avanzado, AI-Recipes, reportes PDF/Excel y soporte 24/7.'
+                },
+                custom: {
+                    title: '👑 Plan Custom',
+                    content: 'Para empresas con 50+ usuarios. Precio personalizado según tus necesidades. Incluye capacitación, integraciones API y soporte dedicado. Un ejecutivo de ventas te contactará en 24 horas.'
+                },
+                contact: {
+                    title: '📞 Contactar Ventas',
+                    content: 'Nuestro equipo de ventas está listo para ayudarte con un plan personalizado. Cuéntanos sobre tu empresa y te daremos una propuesta adaptada a tus necesidades.'
+                }
+            };
+
+            const plan_data = plans[plan] || plans.personal;
+            title.textContent = plan_data.title;
+            content.textContent = plan_data.content;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('planModal').style.display = 'none';
+        }
+
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+
+        function handleCheckout(e) {
+            e.preventDefault();
+            alert('¡Gracias por tu interés! Pronto nos pondremos en contacto para completar el proceso de compra.');
+            closeModal();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('planModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
