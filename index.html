@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow Pro - Gestión Inteligente de Tareas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .left-section {
+            color: white;
+            animation: fadeInLeft 0.8s ease-in-out;
+        }
+
+        .left-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .left-section p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .features-list {
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .right-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInRight 0.8s ease-in-out;
+        }
+
+        .right-section h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #999;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .auth-tab:hover {
+            color: #667eea;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .account-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .account-option {
+            padding: 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .account-option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .account-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .account-option h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .account-option p {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .account-option input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .corporate-fields {
+            display: none;
+            animation: slideDown 0.3s ease-in-out;
+        }
+
+        .corporate-fields.show {
+            display: block;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-guest {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-guest:hover {
+            background: #f8f9ff;
+            border-color: #667eea;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .form-footer {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            display: none;
+            padding: 12px;
+            background: #fee;
+            color: #c33;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            display: none;
+            padding: 12px;
+            background: #efe;
+            color: #3c3;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .left-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .left-section p {
+                font-size: 1rem;
+            }
+
+            .right-section {
+                padding: 30px;
+            }
+
+            .features-list {
+                margin: 20px 0;
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <!-- LEFT SECTION: Marketing -->
+            <div class="left-section">
+                <div class="logo">
+                    <div class="logo-icon">📋</div>
+                    <span>TaskFlow Pro</span>
+                </div>
+
+                <h1>Gestión Inteligente de Tareas</h1>
+
+                <p>Maximiza la productividad de tu equipo con IA predictiva, automatización inteligente y análisis en tiempo real.</p>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span><strong>Escudo de Salud:</strong> Detecta riesgos antes de que ocurran</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span><strong>AI-Recipes:</strong> Plantillas inteligentes por industria</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span><strong>Bio-Ritmo:</strong> Asignación optimizada por cronobiología</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span><strong>Feedback Adaptativo:</strong> Sistema que aprende con tu equipo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SECTION: Authentication -->
+            <div class="right-section">
+                <h2>Bienvenido a TaskFlow Pro</h2>
+
+                <!-- Auth Tabs -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchTab('login')">Iniciar Sesión</button>
+                    <button class="auth-tab" onclick="switchTab('register')">Registrarse</button>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form class="auth-form active" id="loginForm">
+                    <div class="error-message" id="loginError"></div>
+
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+
+                    <button type="button" class="btn btn-secondary" onclick="goToDashboard('login')">
+                        Continuar con Email (Demo)
+                    </button>
+
+                    <div class="divider">
+                        <span>O continúa sin registrarte</span>
+                    </div>
+
+                    <button type="button" class="btn btn-guest" onclick="goToDashboard('guest')">
+                        Acceso como Invitado
+                    </button>
+
+                    <div class="form-footer" style="margin-top: 20px;">
+                        ¿Olvidaste tu contraseña? <a href="#" onclick="handleForgotPassword(event)">Recuperar</a>
+                    </div>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form class="auth-form" id="registerForm">
+                    <div class="error-message" id="registerError"></div>
+                    <div class="success-message" id="registerSuccess"></div>
+
+                    <div class="form-group">
+                        <label>Tipo de Cuenta</label>
+                        <div class="account-type-selector">
+                            <div class="account-option" onclick="selectAccountType('personal')">
+                                <input type="radio" name="accountType" value="personal" checked>
+                                <h4>👤 Personal</h4>
+                                <p>Para ti</p>
+                            </div>
+                            <div class="account-option" onclick="selectAccountType('corporate')">
+                                <input type="radio" name="accountType" value="corporate">
+                                <h4>🏢 Corporativo</h4>
+                                <p>Para tu equipo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerPassword">Contraseña</label>
+                        <input type="password" id="registerPassword" placeholder="Mínimo 8 caracteres" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerName">Nombre Completo</label>
+                        <input type="text" id="registerName" placeholder="Tu nombre" required>
+                    </div>
+
+                    <!-- Corporate Fields -->
+                    <div class="corporate-fields" id="corporateFields">
+                        <div class="form-group">
+                            <label for="registerCompany">Nombre de la Empresa</label>
+                            <input type="text" id="registerCompany" placeholder="Nombre de tu empresa">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerEmployees">Número de Colaboradores</label>
+                            <input type="number" id="registerEmployees" placeholder="Ej: 25" min="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerDomain">Dominio Corporativo</label>
+                            <input type="text" id="registerDomain" placeholder="empresa.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerIndustry">Industria</label>
+                            <select id="registerIndustry">
+                                <option value="">Selecciona tu industria</option>
+                                <option value="tech">Tecnología</option>
+                                <option value="finance">Finanzas</option>
+                                <option value="healthcare">Salud</option>
+                                <option value="retail">Retail</option>
+                                <option value="manufacturing">Manufactura</option>
+                                <option value="education">Educación</option>
+                                <option value="other">Otros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Crear Cuenta</button>
+
+                    <button type="button" class="btn btn-secondary" onclick="goToDashboard('register')">
+                        Continuar como Invitado
+                    </button>
+
+                    <div class="form-footer" style="margin-top: 20px;">
+                        Al registrarte, aceptas nuestros <a href="#" onclick="handleTerms(event)">Términos de Servicio</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== TAB SWITCHING ====================
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+
+            if (tabName === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // ==================== ACCOUNT TYPE SELECTOR ====================
+        function selectAccountType(type) {
+            const options = document.querySelectorAll('.account-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            const radios = document.querySelectorAll('input[name="accountType"]');
+            radios.forEach(radio => {
+                radio.checked = (radio.value === type);
+            });
+
+            const corporateFields = document.getElementById('corporateFields');
+            if (type === 'corporate') {
+                corporateFields.classList.add('show');
+            } else {
+                corporateFields.classList.remove('show');
+            }
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (email && password) {
+                console.log('Login:', { email, password });
+                showSuccess('loginSuccess', 'Iniciando sesión...');
+                setTimeout(() => goToDashboard('login'), 1000);
+            } else {
+                showError('loginError', 'Por favor completa todos los campos');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const name = document.getElementById('registerName').value;
+            const accountType = document.querySelector('input[name="accountType"]:checked').value;
+
+            if (!email || !password || !name) {
+                showError('registerError', 'Por favor completa todos los campos obligatorios');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('registerError', 'La contraseña debe tener al menos 8 caracteres');
+                return;
+            }
+
+            const registerData = {
+                email,
+                password,
+                name,
+                accountType
+            };
+
+            if (accountType === 'corporate') {
+                registerData.company = document.getElementById('registerCompany').value;
+                registerData.employees = document.getElementById('registerEmployees').value;
+                registerData.domain = document.getElementById('registerDomain').value;
+                registerData.industry = document.getElementById('registerIndustry').value;
+            }
+
+            console.log('Registro:', registerData);
+            showSuccess('registerSuccess', '¡Cuenta creada exitosamente! Redirigiendo...');
+            setTimeout(() => goToDashboard('register'), 1500);
+        });
+
+        // ==================== NAVIGATION ====================
+        function goToDashboard(mode) {
+            const userData = {
+                mode: mode, // 'guest', 'login', 'register'
+                timestamp: new Date().toISOString(),
+                type: mode === 'register' ? 
+                    document.querySelector('input[name="accountType"]:checked').value : 
+                    null
+            };
+
+            localStorage.setItem('taskflowUser', JSON.stringify(userData));
+            window.location.href = './dashboard/index.html';
+        }
+
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            alert('Funcionalidad de recuperación de contraseña próximamente');
+        }
+
+        function handleTerms(e) {
+            e.preventDefault();
+            alert('Términos de Servicio de TaskFlow Pro');
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.classList.add('show');
+                setTimeout(() => element.classList.remove('show'), 5000);
+            }
+        }
+
+        function showSuccess(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.classList.add('show');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('TaskFlow Pro initialized');
+            // Check if user is already logged in
+            const user = localStorage.getItem('taskflowUser');
+            if (user) {
+                console.log('Usuario detectado:', JSON.parse(user));
+            }
+        });
+    </script>
+</body>
+</html>
